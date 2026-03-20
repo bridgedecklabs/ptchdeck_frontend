@@ -1,0 +1,52 @@
+.contactGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3xl);
+  align-items: start;
+}
+
+.title {
+  margin-bottom: var(--space-xl);
+}
+
+.contactImg img {
+  width: 100%;
+  border-radius: var(--radius-xl);
+  object-fit: cover;
+}
+
+.welcomeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3xl);
+  align-items: center;
+}
+
+.welcomeText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.welcomeImgMain {
+  width: 100%;
+  border-radius: var(--radius-xl);
+  object-fit: cover;
+}
+
+.howSection {
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border-primary);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.howText {
+  font-size: var(--text-lg);
+  max-width: 500px;
+  margin: var(--space-lg) auto 0;
+}
+
+@media (max-width: 768px) {
+  .contactGrid { grid-template-columns: 1fr; }
+  .welcomeGrid { grid-template-columns: 1fr; }
+}
