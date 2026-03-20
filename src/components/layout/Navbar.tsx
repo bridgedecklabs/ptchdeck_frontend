@@ -1,18 +1,28 @@
 import { useState, useEffect } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { signOut } from 'firebase/auth'
 import { ROUTES } from '../../config/routes'
 import { COMPANY } from '../../config/company'
+import { useAuth } from '../../context/AuthContext'
+import { auth } from '../../config/firebase'
 import styles from './Navbar.module.css'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const { user } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const handleSignOut = async () => {
+    await signOut(auth)
+    navigate(ROUTES.HOME)
+  }
 
   return (
     <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
@@ -43,7 +53,18 @@ export default function Navbar() {
           <NavLink to={ROUTES.EXPLAINER} className={({ isActive }) => isActive ? styles.active : ''}>Explainer</NavLink>
           <NavLink to={ROUTES.FEATURES} className={({ isActive }) => isActive ? styles.active : ''}>Features</NavLink>
           <NavLink to={ROUTES.CONTACT} className={({ isActive }) => isActive ? styles.active : ''}>Contact</NavLink>
-          <Link to={ROUTES.COMING_SOON} className={styles.ctaBtn}>Try it Free</Link>
+
+          {user ? (
+            <div className={styles.authGroup}>
+              <Link to={ROUTES.DASHBOARD} className={styles.dashboardBtn}>Dashboard</Link>
+              <button onClick={handleSignOut} className={styles.signOutBtn}>Sign out</button>
+            </div>
+          ) : (
+            <div className={styles.authGroup}>
+              <Link to={`${ROUTES.AUTH}?mode=login`} className={styles.loginBtn}>Log In</Link>
+              <Link to={`${ROUTES.AUTH}?mode=signup`} className={styles.signupBtn}>Sign Up</Link>
+            </div>
+          )}
         </div>
       </div>
     </nav>
