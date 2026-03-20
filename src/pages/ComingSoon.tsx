@@ -1,11 +1,18 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { ROUTES } from '../config/routes'
 import { COMPANY } from '../config/company'
-import { useNotifyForm } from '../hooks/useNotifyForm'
 import styles from './ComingSoon.module.css'
 
 export default function ComingSoon() {
-  const { email, setEmail, status, handleSubmit } = useNotifyForm('coming-soon')
+  const [email, setEmail] = useState('')
+  const navigate = useNavigate()
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email.trim()) return
+    navigate(`${ROUTES.AUTH}?email=${encodeURIComponent(email)}&mode=signup`)
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -27,29 +34,19 @@ export default function ComingSoon() {
           and for founders to get discovered.
         </p>
 
-        {status === 'success' ? (
-          <div className={styles.successBox}>
-            <span className={styles.successIcon}>✓</span>
-            <div>
-              <p className={styles.successTitle}>You're on the list!</p>
-              <p className={styles.successSub}>We'll email you the moment we launch.</p>
-            </div>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className={styles.form}>
-            <input
-              type="email"
-              required
-              placeholder="Enter your email address"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              className={styles.input}
-            />
-            <button type="submit" disabled={status === 'loading'} className={styles.btn}>
-              {status === 'loading' ? 'Saving...' : 'Get Early Access'}
-            </button>
-          </form>
-        )}
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <input
+            type="email"
+            required
+            placeholder="Enter your email address"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className={styles.input}
+          />
+          <button type="submit" className={styles.btn}>
+            Get Early Access
+          </button>
+        </form>
 
         <p className={styles.privacy}>No spam. Unsubscribe anytime.</p>
 
