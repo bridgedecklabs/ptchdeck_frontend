@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { ROUTES } from '../config/routes'
 import Badge from '../components/ui/Badge'
 import StatsBar from '../components/sections/StatsBar'
@@ -13,6 +14,16 @@ const MOCK_SCORES = [
 ]
 
 export default function Home() {
+  const [emailOpen, setEmailOpen] = useState(false)
+  const [heroEmail, setHeroEmail] = useState('')
+  const navigate = useNavigate()
+
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!heroEmail.trim()) return
+    navigate(`${ROUTES.AUTH}?email=${encodeURIComponent(heroEmail)}&mode=signup`)
+  }
+
   return (
     <>
       {/* ── Hero ────────────────────────────────────────── */}
@@ -29,10 +40,36 @@ export default function Home() {
             <p className={styles.heroSub}>
               Helping VCs effortlessly review and compare multiple decks in one place — powered by AI.
             </p>
-            <div className={styles.heroCtas}>
-              <Link to={ROUTES.COMING_SOON} className={styles.btnPrimary}>Get Early Access</Link>
-              <Link to={ROUTES.EXPLAINER} className={styles.btnOutline}>See How It Works</Link>
-            </div>
+
+            {emailOpen ? (
+              <form onSubmit={handleEmailSubmit} className={styles.heroEmailForm}>
+                <input
+                  type="email"
+                  required
+                  autoFocus
+                  placeholder="Enter your email address"
+                  value={heroEmail}
+                  onChange={e => setHeroEmail(e.target.value)}
+                  className={styles.heroEmailInput}
+                />
+                <button type="submit" className={styles.btnPrimary}>
+                  Continue →
+                </button>
+              </form>
+            ) : (
+              <div className={styles.heroCtas}>
+                <button
+                  onClick={() => setEmailOpen(true)}
+                  className={styles.btnPrimary}
+                >
+                  Get Early Access
+                </button>
+                <Link to={ROUTES.EXPLAINER} className={styles.btnOutline}>
+                  See How It Works
+                </Link>
+              </div>
+            )}
+
             <div className={styles.heroSocial}>
               <div className={styles.avatarGroup}>
                 {['#6366f1', '#8b5cf6', '#06b6d4'].map((c, i) => (
