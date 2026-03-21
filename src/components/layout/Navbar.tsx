@@ -52,6 +52,9 @@ export default function Navbar() {
           <NavLink to={ROUTES.HOME} className={({ isActive }) => isActive ? styles.active : ''} end>Home</NavLink>
           <NavLink to={ROUTES.EXPLAINER} className={({ isActive }) => isActive ? styles.active : ''}>Explainer</NavLink>
           <NavLink to={ROUTES.FEATURES} className={({ isActive }) => isActive ? styles.active : ''}>Features</NavLink>
+          <NavLink to={ROUTES.BLOG} className={({ isActive }) => isActive ? styles.active : ''}>Blog</NavLink>
+          <NavLink to={ROUTES.VC_DIRECTORY} className={({ isActive }) => isActive ? styles.active : ''}>VC Directory</NavLink>
+          <NavLink to={ROUTES.GLOSSARY} className={({ isActive }) => isActive ? styles.active : ''}>Glossary</NavLink>
           <NavLink to={ROUTES.CONTACT} className={({ isActive }) => isActive ? styles.active : ''}>Contact</NavLink>
 
           {user ? (

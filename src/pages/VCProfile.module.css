@@ -1,0 +1,147 @@
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border-primary);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.notFound, .backLink {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+}
+.backLink { display: inline-block; margin-bottom: var(--space-2xl); }
+.backLink:hover { text-decoration: underline; }
+
+.profileHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+  padding-bottom: var(--space-2xl);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+.logo {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-lg);
+  object-fit: contain;
+  border: 1px solid var(--color-border-primary);
+  background: #fff;
+  flex-shrink: 0;
+}
+.logoPlaceholder {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-lg);
+  background: var(--color-accent-muted);
+  color: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+}
+.headerInfo { flex: 1; }
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-sm);
+}
+.name {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+.statusBadge {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+}
+.statusActive { background: rgba(22,163,74,0.1); color: var(--color-success); }
+.statusInactive { background: var(--color-bg-elevated); color: var(--color-text-tertiary); }
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+.website { color: var(--color-accent); text-decoration: none; font-weight: var(--font-weight-medium); }
+.website:hover { text-decoration: underline; }
+
+/* ── Badges ──────────────────────────────────────── */
+.badgesSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+}
+.badgeGroup { display: flex; flex-direction: column; gap: var(--space-sm); }
+.badgeGroupLabel {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badgeRow { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+.badge {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+}
+.badgeSector { background: var(--color-accent-muted); color: var(--color-accent); }
+.badgeStage { background: rgba(6,182,212,0.1); color: #0891b2; }
+.badgeGeo { background: rgba(217,119,6,0.1); color: var(--color-warning); }
+
+/* ── About ───────────────────────────────────────── */
+.sectionHeading {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-lg);
+}
+.aboutSection, .portfolioSection {
+  margin-bottom: var(--space-2xl);
+  padding-bottom: var(--space-2xl);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+.prose {
+  font-size: var(--text-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-secondary);
+  max-width: 720px;
+}
+.prose p { margin: 0 0 var(--space-md); }
+
+/* ── Portfolio ───────────────────────────────────── */
+.portfolioGrid { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+.portfolioChip {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 640px) {
+  .profileHeader { flex-direction: column; }
+  .name { font-size: var(--text-2xl); }
+}
