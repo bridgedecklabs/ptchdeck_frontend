@@ -11,6 +11,12 @@ import ComingSoon from './pages/ComingSoon'
 import AuthPage from './pages/auth/AuthPage'
 import Dashboard from './pages/Dashboard'
 import NotFound from './pages/NotFound'
+import Blog from './pages/Blog'
+import BlogPost from './pages/BlogPost'
+import VCDirectory from './pages/VCDirectory'
+import VCProfile from './pages/VCProfile'
+import Glossary from './pages/Glossary'
+import GlossaryTerm from './pages/GlossaryTerm'
 import { ROUTES } from './config/routes'
 
 function App() {
@@ -23,6 +29,12 @@ function App() {
           <Route path={ROUTES.EXPLAINER} element={<Explainer />} />
           <Route path={ROUTES.FEATURES} element={<Features />} />
           <Route path={ROUTES.CONTACT} element={<Contact />} />
+          <Route path={ROUTES.BLOG} element={<Blog />} />
+          <Route path={ROUTES.BLOG_POST} element={<BlogPost />} />
+          <Route path={ROUTES.VC_DIRECTORY} element={<VCDirectory />} />
+          <Route path={ROUTES.VC_PROFILE} element={<VCProfile />} />
+          <Route path={ROUTES.GLOSSARY} element={<Glossary />} />
+          <Route path={ROUTES.GLOSSARY_TERM} element={<GlossaryTerm />} />
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path={ROUTES.COMING_SOON} element={<ComingSoon />} />

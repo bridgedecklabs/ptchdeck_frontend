@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ROUTES } from '../config/routes'
+import SEO from '../components/seo/SEO'
 import Badge from '../components/ui/Badge'
 import StatsBar from '../components/sections/StatsBar'
 import CTASection from '../components/sections/CTASection'
@@ -26,6 +27,11 @@ export default function Home() {
 
   return (
     <>
+      <SEO
+        title="Connect Founders with Investors"
+        description="PtchDeck helps founders submit pitch decks and connects them with top VCs and investors globally"
+        url="https://ptchdeck.com"
+      />
       {/* ── Hero ────────────────────────────────────────── */}
       <section className={styles.hero}>
         <div className={`container ${styles.heroInner}`}>

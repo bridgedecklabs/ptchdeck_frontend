@@ -6,4 +6,10 @@ export const ROUTES = {
   COMING_SOON: '/coming-soon',
   AUTH: '/auth',
   DASHBOARD: '/dashboard',
+  BLOG: '/blog',
+  BLOG_POST: '/blog/:slug',
+  VC_DIRECTORY: '/vc',
+  VC_PROFILE: '/vc/:slug',
+  GLOSSARY: '/glossary',
+  GLOSSARY_TERM: '/glossary/:slug',
 } as const;
