@@ -1,5 +1,5 @@
 .statsBar {
-  background: var(--color-bg-secondary);
+  background: #F3F4F6;
   border-top: 1px solid var(--color-border-primary);
   border-bottom: 1px solid var(--color-border-primary);
   padding: var(--space-2xl) 0;
@@ -8,9 +8,18 @@
 .inner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-3xl);
+  justify-content: space-between;
+  gap: var(--space-xl);
   flex-wrap: wrap;
+}
+
+.statGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  flex: 1;
+  min-width: 160px;
+  justify-content: center;
 }
 
 .stat {
@@ -18,28 +27,31 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-xs);
+  text-align: center;
 }
 
 .number {
-  font-size: var(--text-4xl);
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
   font-weight: var(--font-weight-bold);
-  color: var(--color-accent);
+  color: #5B4EE8;
+  line-height: 1.1;
 }
 
 .label {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  max-width: 160px;
 }
 
 .divider {
   width: 1px;
   height: 48px;
   background: var(--color-border-primary);
+  flex-shrink: 0;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .divider { display: none; }
-  .inner { gap: var(--space-xl); }
+  .inner { gap: var(--space-xl); justify-content: center; }
+  .statGroup { min-width: 140px; max-width: 200px; }
 }

@@ -17,6 +17,8 @@ import VCDirectory from './pages/VCDirectory'
 import VCProfile from './pages/VCProfile'
 import Glossary from './pages/Glossary'
 import GlossaryTerm from './pages/GlossaryTerm'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsOfService from './pages/TermsOfService'
 import { ROUTES } from './config/routes'
 
 function App() {
@@ -35,6 +37,8 @@ function App() {
           <Route path={ROUTES.VC_PROFILE} element={<VCProfile />} />
           <Route path={ROUTES.GLOSSARY} element={<Glossary />} />
           <Route path={ROUTES.GLOSSARY_TERM} element={<GlossaryTerm />} />
+          <Route path={ROUTES.PRIVACY} element={<PrivacyPolicy />} />
+          <Route path={ROUTES.TERMS} element={<TermsOfService />} />
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path={ROUTES.COMING_SOON} element={<ComingSoon />} />

@@ -1,0 +1,22 @@
+.section {
+  background: var(--color-bg-secondary);
+}
+
+.inner {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.heading {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-lg);
+}
+
+.body {
+  font-size: var(--text-xl);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
