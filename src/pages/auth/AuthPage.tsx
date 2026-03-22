@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithPopup,
@@ -55,6 +56,10 @@ export default function AuthPage() {
   const [forgotEmail, setForgotEmail] = useState(emailParam)
   const [forgotSent, setForgotSent] = useState(false)
 
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showLoginPassword, setShowLoginPassword] = useState(false)
+
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -89,7 +94,12 @@ export default function AuthPage() {
     setError('')
     setSubmitting(true)
     try {
-      await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
+      const cred = await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
+      if (!cred.user.emailVerified) {
+        await signOut(auth)
+        switchView('verify')
+        return
+      }
       navigate(ROUTES.DASHBOARD, { replace: true })
     } catch (err: unknown) {
       setError(getFirebaseError((err as { code?: string }).code || ''))
@@ -172,9 +182,6 @@ export default function AuthPage() {
           </ul>
         </div>
 
-        <p className={styles.panelFooter}>
-          Trusted by <strong>15+ VC firms</strong> in early access
-        </p>
       </div>
 
       {/* ── RIGHT PANEL ── */}
@@ -325,25 +332,35 @@ export default function AuthPage() {
                 <div className={styles.row2}>
                   <div className={styles.field}>
                     <label className={styles.label}>Password</label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="Min. 6 characters"
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      className={styles.input}
-                    />
+                    <div className={styles.passwordWrap}>
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        placeholder="Min. 6 characters"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        className={styles.input}
+                      />
+                      <button type="button" className={styles.eyeBtn} onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                        {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                      </button>
+                    </div>
                   </div>
                   <div className={styles.field}>
                     <label className={styles.label}>Confirm password</label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="Repeat password"
-                      value={confirmPassword}
-                      onChange={e => setConfirmPassword(e.target.value)}
-                      className={styles.input}
-                    />
+                    <div className={styles.passwordWrap}>
+                      <input
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        required
+                        placeholder="Repeat password"
+                        value={confirmPassword}
+                        onChange={e => setConfirmPassword(e.target.value)}
+                        className={styles.input}
+                      />
+                      <button type="button" className={styles.eyeBtn} onClick={() => setShowConfirmPassword(v => !v)} aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}>
+                        {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -398,17 +415,27 @@ export default function AuthPage() {
                   <div className={styles.labelRow}>
                     <label className={styles.label}>Password</label>
                     <button type="button" className={styles.linkBtn} onClick={() => switchView('forgot')}>
-                      Reset Password
+                      Forgot Password
                     </button>
                   </div>
-                  <input
-                    type="password"
-                    required
-                    placeholder="Your password"
-                    value={loginPassword}
-                    onChange={e => setLoginPassword(e.target.value)}
-                    className={styles.input}
-                  />
+                  <div className={styles.passwordWrap}>
+                    <input
+                      type={showLoginPassword ? 'text' : 'password'}
+                      required
+                      placeholder="Your password"
+                      value={loginPassword}
+                      onChange={e => setLoginPassword(e.target.value)}
+                      className={styles.input}
+                    />
+                    <button
+                      type="button"
+                      className={styles.eyeBtn}
+                      onClick={() => setShowLoginPassword(v => !v)}
+                      aria-label={showLoginPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showLoginPassword ? <EyeOffIcon /> : <EyeIcon />}
+                    </button>
+                  </div>
                 </div>
 
                 <button type="submit" disabled={submitting} className={styles.btnPrimary}>
@@ -426,6 +453,25 @@ export default function AuthPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+function EyeIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  )
+}
+
+function EyeOffIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+      <line x1="1" y1="1" x2="23" y2="23"/>
+    </svg>
   )
 }
 

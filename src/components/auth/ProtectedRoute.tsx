@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext'
 import { ROUTES } from '../../config/routes'
 
 export default function ProtectedRoute({ children }: { children: JSX.Element }) {
-  const { user, loading } = useAuth()
+  const { user, loading, emailVerified } = useAuth()
 
   if (loading) {
     return (
@@ -22,7 +22,9 @@ export default function ProtectedRoute({ children }: { children: JSX.Element }) 
     )
   }
 
-  if (!user) return <Navigate to={ROUTES.AUTH} replace />
+  if (!user) return <Navigate to={`${ROUTES.AUTH}?mode=login`} replace />
+
+  if (!emailVerified) return <Navigate to={`${ROUTES.AUTH}?mode=verify`} replace />
 
   return children
 }
