@@ -7,7 +7,7 @@
 // ── Hero ──────────────────────────────────────────────────────
 export const HERO = {
   subheading:
-    'Upload a pitch deck PDF. Get an AI score across market size, team, traction, and product vision — in under 10 seconds.',
+    'Upload a pitch deck PDF. Get an AI score across market size, team, traction, and product vision in under 10 seconds.',
   cta1: 'Analyze a Deck Free',
   cta2: 'See How It Works',
 }
@@ -44,17 +44,17 @@ export const PROBLEM = {
     items: [
       'A typical VC receives 1,000–3,000 pitch decks per year',
       'The average investor spends just 2 minutes 24 seconds per deck',
-      'Great deals get missed — not because the startup was bad, but because there was no time',
-      'No consistent scoring — every team member notices different things',
+      'Great deals get missed not because the startup was bad, but because there was no time',
+      'No consistent scoring every team member notices different things',
     ],
   },
   right: {
     heading: 'PtchDeck fixes this',
     items: [
       'AI reads and scores every deck in under 10 seconds',
-      'Consistent 4-dimension scoring — every deck, every time',
-      'Everything in one Scoreboard — filter, sort, compare at a glance',
-      'Founders get automatic status updates — no more inbox noise',
+      'Consistent 4-dimension scoring every deck, every time',
+      'Everything in one Scoreboard filter, sort, compare at a glance',
+      'Founders get automatic status updates no more inbox noise',
     ],
   },
 }
@@ -72,7 +72,7 @@ export const HOW_IT_WORKS = {
     {
       number: '02',
       title: 'AI scores it instantly',
-      body: 'Our AI reads the full deck and returns a score out of 100 across market size, team strength, traction, and product vision — with written reasoning for each.',
+      body: 'Our AI reads the full deck and returns a score out of 100 across market size, team strength, traction, and product vision with written reasoning for each.',
     },
     {
       number: '03',
@@ -85,7 +85,7 @@ export const HOW_IT_WORKS = {
 // ── Features Grid (only show what is actually built) ──────────
 export const FEATURES = {
   heading: 'Everything your deal team needs',
-  subheading: 'Built for high-volume pitch deck review — not general CRM.',
+  subheading: 'Built for high-volume pitch deck review not general CRM.',
   cards: [
     {
       icon: '🤖',
@@ -95,7 +95,7 @@ export const FEATURES = {
     {
       icon: '📊',
       title: 'Scoreboard',
-      body: 'All your analyzed decks in one filterable, sortable table. Find the best deals in seconds — not hours.',
+      body: 'All your analyzed decks in one filterable, sortable table. Find the best deals in seconds not hours.',
     },
     {
       icon: '📋',
@@ -120,7 +120,7 @@ export const WHO_ITS_FOR = {
 export const FAQ = [
   {
     q: 'How does PtchDeck analyze a pitch deck?',
-    a: 'You upload any PDF pitch deck. Our AI extracts the full content and scores it across four dimensions — market size, team strength, traction, and product vision — returning a score out of 100 with written reasoning for each dimension. The full analysis takes under 10 seconds.',
+    a: 'You upload any PDF pitch deck. Our AI extracts the full content and scores it across four dimensions market size, team strength, traction, and product vision returning a score out of 100 with written reasoning for each dimension. The full analysis takes under 10 seconds.',
   },
   {
     q: 'Is PtchDeck built for VCs or founders?',
@@ -128,11 +128,11 @@ export const FAQ = [
   },
   {
     q: 'How is this different from reading pitch decks manually?',
-    a: 'Manual review takes 20–60 minutes per deck and is inconsistent — different team members notice different things. PtchDeck scores every deck the same way in under 10 seconds, so your whole team works from the same objective signal. You still make the final call.',
+    a: 'Manual review takes 20–60 minutes per deck and is inconsistent different team members notice different things. PtchDeck scores every deck the same way in under 10 seconds, so your whole team works from the same objective signal. You still make the final call.',
   },
   {
     q: 'What file format do you need?',
-    a: 'PDF only. Upload any pitch deck PDF — the AI handles text extraction and analysis automatically. There is no slide limit.',
+    a: 'PDF only. Upload any pitch deck PDF the AI handles text extraction and analysis automatically. There is no slide limit.',
   },
   {
     q: 'Is my deal flow data private and confidential?',

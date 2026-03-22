@@ -64,7 +64,7 @@ export default function Navbar() {
             </div>
           ) : (
             <div className={styles.authGroup}>
-              <Link to={`${ROUTES.AUTH}?mode=signup`} className={styles.signupBtn}>Get started</Link>
+              <Link to={`${ROUTES.AUTH}?mode=login`} className={styles.signupBtn}>Get started</Link>
             </div>
           )}
         </div>

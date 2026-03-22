@@ -65,7 +65,7 @@ export default function Home() {
     <>
       <SEO
         title="AI Pitch Deck Analysis for VCs"
-        description="PtchDeck helps VCs, accelerators, and incubators instantly review, score, and compare startup pitch decks using AI. Upload a PDF — get a score in under 10 seconds."
+        description="PtchDeck helps VCs, accelerators, and incubators instantly review, score, and compare startup pitch decks using AI. Upload a PDF get a score in under 10 seconds."
         url="https://ptchdeck.com"
       />
 
@@ -125,7 +125,7 @@ export default function Home() {
               <div className={styles.mockDeckRow}>
                 <div className={styles.mockDeckIcon}>📄</div>
                 <div>
-                  <p className={styles.mockDeckName}>Series A Pitch — Acme.pdf</p>
+                  <p className={styles.mockDeckName}>Series A Pitch Acme.pdf</p>
                   <p className={styles.mockDeckMeta}>24 slides · Uploaded 2 min ago</p>
                 </div>
                 <span className={styles.mockScore}>{scoreDisplay}</span>
