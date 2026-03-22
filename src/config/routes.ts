@@ -14,4 +14,5 @@ export const ROUTES = {
   GLOSSARY_TERM: '/glossary/:slug',
   PRIVACY: '/privacy-policy',
   TERMS: '/terms-of-service',
+  AUTH_ACTION: '/auth/action',
 } as const;

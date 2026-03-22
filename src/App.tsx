@@ -3,12 +3,14 @@ import { AuthProvider } from './context/AuthContext'
 import ScrollToTop from './components/ScrollToTop'
 import Layout from './components/layout/Layout'
 import ProtectedRoute from './components/auth/ProtectedRoute'
+import PublicRoute from './components/auth/PublicRoute'
 import Home from './pages/Home'
 import Explainer from './pages/Explainer'
 import Features from './pages/Features'
 import Contact from './pages/Contact'
 import ComingSoon from './pages/ComingSoon'
 import AuthPage from './pages/auth/AuthPage'
+import AuthAction from './pages/AuthAction'
 import Dashboard from './pages/Dashboard'
 import NotFound from './pages/NotFound'
 import Blog from './pages/Blog'
@@ -42,7 +44,15 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path={ROUTES.COMING_SOON} element={<ComingSoon />} />
-        <Route path={ROUTES.AUTH} element={<AuthPage />} />
+        <Route
+          path={ROUTES.AUTH}
+          element={
+            <PublicRoute>
+              <AuthPage />
+            </PublicRoute>
+          }
+        />
+        <Route path={ROUTES.AUTH_ACTION} element={<AuthAction />} />
         <Route
           path={ROUTES.DASHBOARD}
           element={
