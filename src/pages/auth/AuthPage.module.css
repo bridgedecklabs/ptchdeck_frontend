@@ -50,6 +50,10 @@
   z-index: 1;
 }
 
+.panelLogo:hover {
+  color: #ffffff;
+}
+
 .panelBody {
   flex: 1;
   display: flex;

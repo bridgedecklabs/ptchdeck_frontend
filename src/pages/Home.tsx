@@ -1,9 +1,14 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../config/routes'
+import { HERO } from '../data/landingPage'
 import SEO from '../components/seo/SEO'
-import Badge from '../components/ui/Badge'
 import StatsBar from '../components/sections/StatsBar'
+import ProblemSolution from '../components/sections/ProblemSolution'
+import HowItWorks from '../components/sections/HowItWorks'
+import FeaturesGrid from '../components/sections/FeaturesGrid'
+import WhoItsFor from '../components/sections/WhoItsFor'
+import FAQSection from '../components/sections/FAQSection'
 import CTASection from '../components/sections/CTASection'
 import styles from './Home.module.css'
 
@@ -17,7 +22,33 @@ const MOCK_SCORES = [
 export default function Home() {
   const [emailOpen, setEmailOpen] = useState(false)
   const [heroEmail, setHeroEmail] = useState('')
+  const [scoreDisplay, setScoreDisplay] = useState(0)
+  const [barsAnimated, setBarsAnimated] = useState(false)
   const navigate = useNavigate()
+  const heroRef = useRef<HTMLDivElement>(null)
+
+  // Animate score counter 0 → 87 on mount
+  useEffect(() => {
+    const target = 87
+    const duration = 800
+    const startTime = performance.now()
+
+    const tick = (now: number) => {
+      const elapsed = now - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3) // ease-out cubic
+      setScoreDisplay(Math.round(eased * target))
+      if (progress < 1) requestAnimationFrame(tick)
+    }
+
+    const frame = requestAnimationFrame(tick)
+    // Trigger bar animations with a small delay
+    const timer = setTimeout(() => setBarsAnimated(true), 100)
+    return () => {
+      cancelAnimationFrame(frame)
+      clearTimeout(timer)
+    }
+  }, [])
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,27 +56,30 @@ export default function Home() {
     navigate(`${ROUTES.AUTH}?email=${encodeURIComponent(heroEmail)}&mode=signup`)
   }
 
+  const scrollToHowItWorks = () => {
+    const el = document.getElementById('how-it-works')
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   return (
     <>
       <SEO
-        title="Connect Founders with Investors"
-        description="PtchDeck helps founders submit pitch decks and connects them with top VCs and investors globally"
+        title="AI Pitch Deck Analysis for VCs"
+        description="PtchDeck helps VCs, accelerators, and incubators instantly review, score, and compare startup pitch decks using AI. Upload a PDF — get a score in under 10 seconds."
         url="https://ptchdeck.com"
       />
-      {/* ── Hero ────────────────────────────────────────── */}
-      <section className={styles.hero}>
+
+      {/* ── Hero ─────────────────────────────────────────── */}
+      <section className={styles.hero} ref={heroRef}>
         <div className={`container ${styles.heroInner}`}>
 
           {/* Left */}
           <div className={styles.heroLeft}>
-            <Badge>Coming Soon</Badge>
             <h1 className={styles.heroTitle}>
-              Simplify Pitchdeck<br />
-              <span className={styles.heroAccent}>Analysis</span>
+              AI-Powered Pitch Deck<br />
+              <span className={styles.heroAccent}>Analysis for VCs</span>
             </h1>
-            <p className={styles.heroSub}>
-              Helping VCs effortlessly review and compare multiple decks in one place — powered by AI.
-            </p>
+            <p className={styles.heroSub}>{HERO.subheading}</p>
 
             {emailOpen ? (
               <form onSubmit={handleEmailSubmit} className={styles.heroEmailForm}>
@@ -68,25 +102,16 @@ export default function Home() {
                   onClick={() => setEmailOpen(true)}
                   className={styles.btnPrimary}
                 >
-                  Get Early Access
+                  {HERO.cta1}
                 </button>
-                <Link to={ROUTES.EXPLAINER} className={styles.btnOutline}>
-                  See How It Works
-                </Link>
+                <button onClick={scrollToHowItWorks} className={styles.btnOutline}>
+                  {HERO.cta2}
+                </button>
               </div>
             )}
-
-            <div className={styles.heroSocial}>
-              <div className={styles.avatarGroup}>
-                {['#6366f1', '#8b5cf6', '#06b6d4'].map((c, i) => (
-                  <span key={i} className={styles.avatar} style={{ background: c }} />
-                ))}
-              </div>
-              <p className={styles.socialProof}>Trusted by <strong>15+ VC firms</strong> in early access</p>
-            </div>
           </div>
 
-          {/* Right — product mock-up card */}
+          {/* Right — animated mock card */}
           <div className={styles.heroRight}>
             <div className={styles.mockCard}>
               <div className={styles.mockHeader}>
@@ -103,11 +128,11 @@ export default function Home() {
                   <p className={styles.mockDeckName}>Series A Pitch — Acme.pdf</p>
                   <p className={styles.mockDeckMeta}>24 slides · Uploaded 2 min ago</p>
                 </div>
-                <span className={styles.mockScore}>87</span>
+                <span className={styles.mockScore}>{scoreDisplay}</span>
               </div>
 
               <div className={styles.mockBars}>
-                {MOCK_SCORES.map(item => (
+                {MOCK_SCORES.map((item, i) => (
                   <div key={item.label} className={styles.mockBarRow}>
                     <div className={styles.mockBarLabels}>
                       <span>{item.label}</span>
@@ -116,7 +141,10 @@ export default function Home() {
                     <div className={styles.mockBarTrack}>
                       <div
                         className={styles.mockBarFill}
-                        style={{ width: `${item.value}%` }}
+                        style={{
+                          width: barsAnimated ? `${item.value}%` : '0%',
+                          transitionDelay: `${i * 150}ms`,
+                        }}
                       />
                     </div>
                   </div>
@@ -142,56 +170,22 @@ export default function Home() {
       {/* ── Stats ───────────────────────────────────────── */}
       <StatsBar />
 
-      {/* ── Info ────────────────────────────────────────── */}
-      <section className="section">
-        <div className={`container ${styles.infoGrid}`}>
-          <div className={styles.infoText}>
-            <span className={styles.sectionLabel}>What we do</span>
-            <h3>Simplifying Pitchdeck Analysis</h3>
-            <p>ptchdeck helps VCs quickly review and compare multiple pitch decks, saving time and effort. Stay tuned — our platform launches soon!</p>
-          </div>
-          <div className={styles.infoImg}>
-            <img
-              src="https://images.unsplash.com/photo-1571677246347-5040036b95cc?auto=format&fit=crop&w=562&h=480"
-              alt="Pitch deck analysis"
-            />
-          </div>
-        </div>
-      </section>
+      {/* ── Problem → Solution ──────────────────────────── */}
+      <ProblemSolution />
 
-      {/* ── Features ────────────────────────────────────── */}
-      <section className={`section ${styles.featuresSection}`}>
-        <div className="container">
-          <div className={styles.featuresHeader}>
-            <span className={styles.sectionLabel}>Features</span>
-            <h3>Everything you need to evaluate deals faster</h3>
-            <p>Review multiple pitch decks in one place, powered by AI.</p>
-          </div>
-          <div className={styles.featureCards}>
-            <div className={styles.featureCard}>
-              <img
-                src="https://images.unsplash.com/photo-1686061594225-3e92c0cd51b0?auto=format&fit=crop&w=606&h=344"
-                alt="Smart Insights"
-              />
-              <div className={styles.featureCardBody}>
-                <h4>Smart Insights</h4>
-                <p>Get AI-powered summaries highlighting key points from every pitch deck you upload.</p>
-              </div>
-            </div>
-            <div className={styles.featureCard}>
-              <img
-                src="https://images.unsplash.com/photo-1693106603487-3601a8e4fef0?auto=format&fit=crop&w=606&h=344"
-                alt="Easy Comparison"
-              />
-              <div className={styles.featureCardBody}>
-                <h4>Easy Comparison</h4>
-                <p>Effortlessly compare multiple startups side-by-side to spot promising opportunities.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ── How It Works ────────────────────────────────── */}
+      <HowItWorks id="how-it-works" />
 
+      {/* ── Features Grid ───────────────────────────────── */}
+      <FeaturesGrid />
+
+      {/* ── Who It's For ────────────────────────────────── */}
+      <WhoItsFor />
+
+      {/* ── FAQ ─────────────────────────────────────────── */}
+      <FAQSection />
+
+      {/* ── Bottom CTA ──────────────────────────────────── */}
       <CTASection />
     </>
   )

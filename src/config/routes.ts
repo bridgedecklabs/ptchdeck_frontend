@@ -12,4 +12,6 @@ export const ROUTES = {
   VC_PROFILE: '/vc/:slug',
   GLOSSARY: '/glossary',
   GLOSSARY_TERM: '/glossary/:slug',
+  PRIVACY: '/privacy-policy',
+  TERMS: '/terms-of-service',
 } as const;

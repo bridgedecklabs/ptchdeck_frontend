@@ -272,8 +272,8 @@ export default function AuthPage() {
               </div>
 
               <div className={styles.viewToggle}>
-                <button className={`${styles.toggleBtn} ${styles.toggleActive}`}>Sign Up</button>
                 <button className={styles.toggleBtn} onClick={() => switchView('login')}>Log In</button>
+                <button className={`${styles.toggleBtn} ${styles.toggleActive}`}>Sign Up</button>
               </div>
 
               <button type="button" onClick={handleGoogle} disabled={submitting} className={styles.googleBtn}>
@@ -368,8 +368,8 @@ export default function AuthPage() {
               </div>
 
               <div className={styles.viewToggle}>
-                <button className={styles.toggleBtn} onClick={() => switchView('signup')}>Sign Up</button>
                 <button className={`${styles.toggleBtn} ${styles.toggleActive}`}>Log In</button>
+                <button className={styles.toggleBtn} onClick={() => switchView('signup')}>Sign Up</button>
               </div>
 
               <button type="button" onClick={handleGoogle} disabled={submitting} className={styles.googleBtn}>
