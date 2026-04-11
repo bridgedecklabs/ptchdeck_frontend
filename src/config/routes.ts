@@ -16,3 +16,17 @@ export const ROUTES = {
   TERMS: '/terms-of-service',
   AUTH_ACTION: '/auth/action',
 } as const;
+
+export const DASHBOARD_ROUTES = {
+  OVERVIEW: '/dashboard',
+  UPLOAD: '/dashboard/upload',
+  SCOREBOARD: '/dashboard/scoreboard',
+  PIPELINE: '/dashboard/pipeline',
+  PORTFOLIO: '/dashboard/portfolio',
+  MARKET: '/dashboard/market',
+  MARKET_STARTUP: '/dashboard/market/startup/:id',
+  USERS: '/dashboard/users',
+  CONNECTORS: '/dashboard/connectors',
+  SETTINGS: '/dashboard/settings',
+  BILLING: '/dashboard/billing',
+} as const;

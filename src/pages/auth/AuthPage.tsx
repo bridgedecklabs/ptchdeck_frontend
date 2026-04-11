@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut,
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithPopup,
@@ -13,9 +12,10 @@ import { auth, googleProvider } from '../../config/firebase'
 import { useAuth } from '../../context/AuthContext'
 import { ROUTES } from '../../config/routes'
 import { COMPANY } from '../../config/company'
+import { registerUser, getMe } from '../../services/api'
 import styles from './AuthPage.module.css'
 
-type View = 'signup' | 'login' | 'forgot' | 'verify'
+type View = 'signup' | 'login' | 'forgot' | 'verify' | 'google-setup'
 
 function getFirebaseError(code: string): string {
   switch (code) {
@@ -34,7 +34,7 @@ function getFirebaseError(code: string): string {
 export default function AuthPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { user, loading } = useAuth()
+  const { user, loading, refreshProfile } = useAuth()
 
   const emailParam = searchParams.get('email') || ''
   const modeParam = (searchParams.get('mode') as View) || 'signup'
@@ -56,15 +56,19 @@ export default function AuthPage() {
   const [forgotEmail, setForgotEmail] = useState(emailParam)
   const [forgotSent, setForgotSent] = useState(false)
 
+  // Google new-user setup
+  const [googleCompany, setGoogleCompany] = useState('')
+
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [showLoginPassword, setShowLoginPassword] = useState(false)
 
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [resendCooldown, setResendCooldown] = useState(0)
 
   useEffect(() => {
-    if (!loading && user) navigate(ROUTES.DASHBOARD, { replace: true })
+    if (!loading && user && user.emailVerified) navigate(ROUTES.DASHBOARD, { replace: true })
   }, [user, loading, navigate])
 
   const switchView = (v: View) => { setError(''); setView(v) }
@@ -79,7 +83,12 @@ export default function AuthPage() {
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password)
       await updateProfile(cred.user, { displayName: name.trim() })
-      if (company.trim()) localStorage.setItem('ptchdeck_company', company.trim())
+      await registerUser({
+        firebase_uid: cred.user.uid,
+        email: cred.user.email!,
+        name: name.trim(),
+        company_name: company.trim(),
+      })
       await sendEmailVerification(cred.user)
       setView('verify')
     } catch (err: unknown) {
@@ -96,7 +105,6 @@ export default function AuthPage() {
     try {
       const cred = await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
       if (!cred.user.emailVerified) {
-        await signOut(auth)
         switchView('verify')
         return
       }
@@ -126,11 +134,44 @@ export default function AuthPage() {
     setError('')
     setSubmitting(true)
     try {
-      await signInWithPopup(auth, googleProvider)
-      navigate(ROUTES.DASHBOARD, { replace: true })
+      const result = await signInWithPopup(auth, googleProvider)
+      const token = await result.user.getIdToken()
+      try {
+        await getMe(token)
+        await refreshProfile()
+        navigate(ROUTES.DASHBOARD, { replace: true })
+      } catch (meErr: unknown) {
+        if ((meErr as { status?: number }).status === 404) {
+          setView('google-setup')
+        } else {
+          throw meErr
+        }
+      }
     } catch (err: unknown) {
       const msg = getFirebaseError((err as { code?: string }).code || '')
       if (msg) setError(msg)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleGoogleSetup = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setSubmitting(true)
+    try {
+      const u = auth.currentUser!
+      const token = await u.getIdToken()
+      await registerUser({
+        firebase_uid: u.uid,
+        email: u.email!,
+        name: u.displayName || '',
+        company_name: googleCompany.trim(),
+      })
+      await refreshProfile()
+      navigate(ROUTES.DASHBOARD, { replace: true })
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Something went wrong. Please try again.')
     } finally {
       setSubmitting(false)
     }
@@ -200,25 +241,71 @@ export default function AuthPage() {
             <span>{COMPANY.name}</span>
           </Link>
 
+          {/* ── GOOGLE SETUP VIEW ── */}
+          {view === 'google-setup' && (
+            <>
+              <div className={styles.formHeader}>
+                <h2 className={styles.formTitle}>One last step</h2>
+                <p className={styles.formSubtitle}>Tell us the name of your firm to finish setting up your account.</p>
+              </div>
+
+              <form onSubmit={handleGoogleSetup} className={styles.form}>
+                {error && <div className={styles.errorBanner}>{error}</div>}
+                <div className={styles.field}>
+                  <label className={styles.label}>Company name <span className={styles.optional}>(optional)</span></label>
+                  <input
+                    type="text"
+                    placeholder="Sequoia Capital"
+                    value={googleCompany}
+                    onChange={e => setGoogleCompany(e.target.value)}
+                    className={styles.input}
+                    autoFocus
+                  />
+                </div>
+                <button type="submit" disabled={submitting} className={styles.btnPrimary}>
+                  {submitting ? 'Setting up…' : 'Continue to Dashboard'}
+                </button>
+              </form>
+            </>
+          )}
+
           {/* ── VERIFY VIEW ── */}
           {view === 'verify' && (
             <div className={styles.verifyBox}>
               <div className={styles.verifyIconWrap}>✉</div>
               <h2 className={styles.formTitle}>Check your inbox</h2>
               <p className={styles.formSubtitle}>
-                We sent a verification link to <strong>{email}</strong>.
+                We sent a verification link to{' '}
+                <strong>{auth.currentUser?.email || email || loginEmail || 'your email'}</strong>.
                 Click it to activate your account.
               </p>
               <p className={styles.verifyNote}>
-                Didn't receive it?{' '}
-                <button
-                  className={styles.linkBtn}
-                  onClick={async () => {
-                    if (auth.currentUser) await sendEmailVerification(auth.currentUser)
-                  }}
-                >
-                  Resend email
-                </button>
+                {resendCooldown > 0 ? (
+                  <span style={{ color: 'var(--color-success)' }}>
+                    ✓ Email sent! Resend again in {resendCooldown}s
+                  </span>
+                ) : (
+                  <>
+                    Didn't receive it?{' '}
+                    <button
+                      className={styles.linkBtn}
+                      onClick={async () => {
+                        if (auth.currentUser) {
+                          await sendEmailVerification(auth.currentUser)
+                          setResendCooldown(60)
+                          const interval = setInterval(() => {
+                            setResendCooldown(prev => {
+                              if (prev <= 1) { clearInterval(interval); return 0 }
+                              return prev - 1
+                            })
+                          }, 1000)
+                        }
+                      }}
+                    >
+                      Resend email
+                    </button>
+                  </>
+                )}
               </p>
               <button className={styles.btnPrimary} onClick={() => switchView('login')}>
                 Go to Login
