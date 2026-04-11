@@ -24,7 +24,6 @@ export default function AuthAction() {
   useEffect(() => {
     if (mode === 'verifyEmail' && oobCode) {
       applyActionCode(auth, oobCode)
-        .then(() => auth.currentUser?.reload())
         .then(() => setVerifyStatus('success'))
         .catch(() => setVerifyStatus('error'))
     }
@@ -119,7 +118,7 @@ export default function AuthAction() {
                 <div className={styles.successIcon}>✓</div>
                 <h1 className={styles.heading}>Email verified!</h1>
                 <p className={styles.sub}>Your email is confirmed. You can now log in.</p>
-                <Link to={ROUTES.DASHBOARD} className={styles.btn}>Go to Dashboard</Link>
+                <Link to={`${ROUTES.AUTH}?mode=login`} className={styles.btn}>Go to Login</Link>
               </div>
             )}
             {verifyStatus === 'error' && (
