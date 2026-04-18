@@ -175,7 +175,7 @@ export default function AuthPage() {
       }
 
       // Existing user
-      setSession(response)
+      setSession(response as import('../../services/authApi').SessionData)
       navigate(ROUTES.DASHBOARD, { replace: true })
     } catch (err: unknown) {
       const code = (err as { code?: string }).code || ''

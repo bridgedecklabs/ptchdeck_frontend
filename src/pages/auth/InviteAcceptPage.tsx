@@ -5,7 +5,6 @@ import {
   signInWithPopup,
   updateProfile,
 } from 'firebase/auth'
-import { Building2, Loader2 } from 'lucide-react'
 import { auth, googleProvider } from '../../config/firebase'
 import { useAuth } from '../../context/AuthContext'
 import { ROUTES } from '../../config/routes'
@@ -120,7 +119,7 @@ export default function InviteAcceptPage() {
         fontFamily: 'Inter, sans-serif',
         gap: '0.5rem',
       }}>
-        <Loader2 size={20} style={{ animation: 'spin 1s linear infinite' }} />
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'spin 1s linear infinite' }} aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
         <span>Loading invite…</span>
       </div>
     )
@@ -168,7 +167,7 @@ export default function InviteAcceptPage() {
           </h2>
           {firmName && (
             <p className={styles.panelSub}>
-              <Building2 size={16} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '0.4rem' }} />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline', verticalAlign: 'middle', marginRight: '0.4rem' }} aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
               {firmName}
             </p>
           )}
