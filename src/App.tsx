@@ -13,6 +13,7 @@ import AuthPage from './pages/auth/AuthPage'
 import AuthAction from './pages/AuthAction'
 import Dashboard from './pages/Dashboard'
 import NotFound from './pages/NotFound'
+import InviteAcceptPage from './pages/auth/InviteAcceptPage'
 import Blog from './pages/Blog'
 import BlogPost from './pages/BlogPost'
 import VCDirectory from './pages/VCDirectory'
@@ -53,6 +54,7 @@ function App() {
           }
         />
         <Route path={ROUTES.AUTH_ACTION} element={<AuthAction />} />
+        <Route path={ROUTES.INVITE_ACCEPT} element={<InviteAcceptPage />} />
         <Route
           path={ROUTES.DASHBOARD}
           element={

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import {
   createUserWithEmailAndPassword,
@@ -13,9 +13,16 @@ import { auth, googleProvider } from '../../config/firebase'
 import { useAuth } from '../../context/AuthContext'
 import { ROUTES } from '../../config/routes'
 import { COMPANY } from '../../config/company'
+import {
+  apiEmailRegister,
+  apiGoogleAuth,
+  apiCompleteProfile,
+  apiGetMe,
+  ApiNotFoundError,
+} from '../../services/authApi'
 import styles from './AuthPage.module.css'
 
-type View = 'signup' | 'login' | 'forgot' | 'verify'
+type View = 'signup' | 'login' | 'forgot' | 'verify' | 'company'
 
 function getFirebaseError(code: string): string {
   switch (code) {
@@ -34,7 +41,7 @@ function getFirebaseError(code: string): string {
 export default function AuthPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { user, loading } = useAuth()
+  const { loading, setSession } = useAuth()
 
   const emailParam = searchParams.get('email') || ''
   const modeParam = (searchParams.get('mode') as View) || 'signup'
@@ -56,6 +63,9 @@ export default function AuthPage() {
   const [forgotEmail, setForgotEmail] = useState(emailParam)
   const [forgotSent, setForgotSent] = useState(false)
 
+  // Company view (Google new-user flow)
+  const [companyInput, setCompanyInput] = useState('')
+
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [showLoginPassword, setShowLoginPassword] = useState(false)
@@ -63,23 +73,21 @@ export default function AuthPage() {
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  useEffect(() => {
-    if (!loading && user) navigate(ROUTES.DASHBOARD, { replace: true })
-  }, [user, loading, navigate])
-
   const switchView = (v: View) => { setError(''); setView(v) }
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     if (!name.trim()) { setError('Please enter your name.'); return }
+    if (!company.trim()) { setError('Please enter your company name.'); return }
     if (password !== confirmPassword) { setError('Passwords do not match.'); return }
     if (password.length < 6) { setError('Password must be at least 6 characters.'); return }
     setSubmitting(true)
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password)
       await updateProfile(cred.user, { displayName: name.trim() })
-      if (company.trim()) localStorage.setItem('ptchdeck_company', company.trim())
+      // Store company temporarily until email is verified and they log in
+      sessionStorage.setItem('ptchdeck_pending_company', company.trim())
       await sendEmailVerification(cred.user)
       setView('verify')
     } catch (err: unknown) {
@@ -95,14 +103,37 @@ export default function AuthPage() {
     setSubmitting(true)
     try {
       const cred = await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
+      await cred.user.reload()
       if (!cred.user.emailVerified) {
         await signOut(auth)
         switchView('verify')
         return
       }
+      const token = await cred.user.getIdToken()
+      try {
+        const data = await apiGetMe(token)
+        setSession(data)
+      } catch (apiErr) {
+        if (apiErr instanceof ApiNotFoundError) {
+          // New user — register in backend using stored company
+          const storedCompany = sessionStorage.getItem('ptchdeck_pending_company') || ''
+          const data = await apiEmailRegister({
+            firebase_uid: cred.user.uid,
+            email: cred.user.email!,
+            full_name: cred.user.displayName || '',
+            company_name: storedCompany,
+          })
+          sessionStorage.removeItem('ptchdeck_pending_company')
+          setSession(data)
+        } else {
+          throw apiErr
+        }
+      }
       navigate(ROUTES.DASHBOARD, { replace: true })
     } catch (err: unknown) {
-      setError(getFirebaseError((err as { code?: string }).code || ''))
+      const code = (err as { code?: string }).code || ''
+      const msg = code ? getFirebaseError(code) : (err as Error).message || 'Something went wrong.'
+      setError(msg)
     } finally {
       setSubmitting(false)
     }
@@ -126,11 +157,53 @@ export default function AuthPage() {
     setError('')
     setSubmitting(true)
     try {
-      await signInWithPopup(auth, googleProvider)
+      const result = await signInWithPopup(auth, googleProvider)
+
+      const response = await apiGoogleAuth({
+        firebase_uid: result.user.uid,
+        email: result.user.email!,
+        full_name: result.user.displayName || '',
+      })
+
+      if ('needs_company' in response && response.needs_company) {
+        // New Google user — collect company name before creating firm
+        sessionStorage.setItem('ptchdeck_google_uid', result.user.uid)
+        sessionStorage.setItem('ptchdeck_google_email', result.user.email!)
+        sessionStorage.setItem('ptchdeck_google_name', result.user.displayName || '')
+        setView('company')
+        return
+      }
+
+      // Existing user
+      setSession(response)
       navigate(ROUTES.DASHBOARD, { replace: true })
     } catch (err: unknown) {
-      const msg = getFirebaseError((err as { code?: string }).code || '')
+      const code = (err as { code?: string }).code || ''
+      const msg = getFirebaseError(code)
       if (msg) setError(msg)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleCompanySubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    if (!companyInput.trim()) { setError('Please enter your company name.'); return }
+    setSubmitting(true)
+    try {
+      const firebase_uid = sessionStorage.getItem('ptchdeck_google_uid') || ''
+      const data = await apiCompleteProfile({
+        firebase_uid,
+        company_name: companyInput.trim(),
+      })
+      sessionStorage.removeItem('ptchdeck_google_uid')
+      sessionStorage.removeItem('ptchdeck_google_email')
+      sessionStorage.removeItem('ptchdeck_google_name')
+      setSession(data)
+      navigate(ROUTES.DASHBOARD, { replace: true })
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Something went wrong.')
     } finally {
       setSubmitting(false)
     }
@@ -220,7 +293,7 @@ export default function AuthPage() {
                   Resend email
                 </button>
               </p>
-              <button className={styles.btnPrimary} onClick={() => switchView('login')}>
+              <button className={styles.btnPrimary} onClick={() => { setLoginEmail(email); switchView('login') }}>
                 Go to Login
               </button>
             </div>
@@ -306,9 +379,10 @@ export default function AuthPage() {
                     />
                   </div>
                   <div className={styles.field}>
-                    <label className={styles.label}>Company <span className={styles.optional}>(optional)</span></label>
+                    <label className={styles.label}>Company</label>
                     <input
                       type="text"
+                      required
                       placeholder="Sequoia Capital"
                       value={company}
                       onChange={e => setCompany(e.target.value)}
@@ -447,6 +521,37 @@ export default function AuthPage() {
                 Don't have an account?{' '}
                 <button className={styles.linkBtn} onClick={() => switchView('signup')}>Sign up</button>
               </p>
+            </>
+          )}
+
+          {/* ── COMPANY VIEW (new Google user) ── */}
+          {view === 'company' && (
+            <>
+              <div className={styles.formHeader}>
+                <h2 className={styles.formTitle}>One last thing</h2>
+                <p className={styles.formSubtitle}>What's the name of your firm?</p>
+              </div>
+
+              <form onSubmit={handleCompanySubmit} className={styles.form}>
+                {error && <div className={styles.errorBanner}>{error}</div>}
+
+                <div className={styles.field}>
+                  <label className={styles.label}>Company</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Sequoia Capital"
+                    value={companyInput}
+                    onChange={e => setCompanyInput(e.target.value)}
+                    className={styles.input}
+                    autoFocus
+                  />
+                </div>
+
+                <button type="submit" disabled={submitting} className={styles.btnPrimary}>
+                  {submitting ? 'Setting up…' : 'Get Started'}
+                </button>
+              </form>
             </>
           )}
 
