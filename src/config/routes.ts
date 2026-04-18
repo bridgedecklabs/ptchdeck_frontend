@@ -15,4 +15,5 @@ export const ROUTES = {
   PRIVACY: '/privacy-policy',
   TERMS: '/terms-of-service',
   AUTH_ACTION: '/auth/action',
+  INVITE_ACCEPT: '/invite/accept',
 } as const;
