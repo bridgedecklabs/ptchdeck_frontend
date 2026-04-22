@@ -1,9 +1,9 @@
 import { signOut } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
-import { auth } from '../config/firebase'
-import { useAuth } from '../context/AuthContext'
-import { ROUTES } from '../config/routes'
-import { COMPANY } from '../config/company'
+import { auth } from '../../config/firebase'
+import { useAuth } from '../../context/AuthContext'
+import { ROUTES } from '../../config/routes'
+import { COMPANY } from '../../config/company'
 import styles from './Dashboard.module.css'
 
 export default function Dashboard() {
