@@ -4,24 +4,35 @@ import ScrollToTop from './components/ScrollToTop'
 import Layout from './components/layout/Layout'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import PublicRoute from './components/auth/PublicRoute'
-import Home from './pages/Home'
-import Explainer from './pages/Explainer'
-import Features from './pages/Features'
-import Contact from './pages/Contact'
-import ComingSoon from './pages/ComingSoon'
+
+// auth
 import AuthPage from './pages/auth/AuthPage'
-import AuthAction from './pages/AuthAction'
-import Dashboard from './pages/Dashboard'
-import NotFound from './pages/NotFound'
+import AuthAction from './pages/auth/AuthAction'
 import InviteAcceptPage from './pages/auth/InviteAcceptPage'
-import Blog from './pages/Blog'
-import BlogPost from './pages/BlogPost'
-import VCDirectory from './pages/VCDirectory'
-import VCProfile from './pages/VCProfile'
-import Glossary from './pages/Glossary'
-import GlossaryTerm from './pages/GlossaryTerm'
-import PrivacyPolicy from './pages/PrivacyPolicy'
-import TermsOfService from './pages/TermsOfService'
+
+// dashboard
+import Dashboard from './pages/dashboard/Dashboard'
+
+// marketing
+import Home from './pages/marketing/Home'
+import Explainer from './pages/marketing/Explainer'
+import Features from './pages/marketing/Features'
+import Contact from './pages/marketing/Contact'
+import ComingSoon from './pages/marketing/ComingSoon'
+import Blog from './pages/marketing/Blog'
+import BlogPost from './pages/marketing/BlogPost'
+import VCDirectory from './pages/marketing/VCDirectory'
+import VCProfile from './pages/marketing/VCProfile'
+import Glossary from './pages/marketing/Glossary'
+import GlossaryTerm from './pages/marketing/GlossaryTerm'
+
+// legal
+import PrivacyPolicy from './pages/legal/PrivacyPolicy'
+import TermsOfService from './pages/legal/TermsOfService'
+
+// misc
+import NotFound from './pages/NotFound'
+
 import { ROUTES } from './config/routes'
 
 function App() {

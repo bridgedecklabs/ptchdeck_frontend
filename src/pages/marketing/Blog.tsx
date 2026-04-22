@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { sanityClient, urlFor } from '../config/sanity'
-import SEO from '../components/seo/SEO'
+import { sanityClient, urlFor } from '../../config/sanity'
+import SEO from '../../components/seo/SEO'
 import styles from './Blog.module.css'
 
 interface BlogPost {

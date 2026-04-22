@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { PortableText } from '@portabletext/react'
-import { sanityClient } from '../config/sanity'
-import SEO from '../components/seo/SEO'
+import { sanityClient } from '../../config/sanity'
+import SEO from '../../components/seo/SEO'
 import styles from './GlossaryTerm.module.css'
 
 interface Term {
