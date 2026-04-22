@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { sanityClient } from '../config/sanity'
-import SEO from '../components/seo/SEO'
+import { sanityClient } from '../../config/sanity'
+import SEO from '../../components/seo/SEO'
 import styles from './Glossary.module.css'
 
 interface GlossaryTerm {

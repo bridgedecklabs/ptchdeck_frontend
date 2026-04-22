@@ -1,38 +1,70 @@
-import { useState, useEffect } from 'react'
-import { useSearchParams, Link } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { useSearchParams, useNavigate, Link } from 'react-router-dom'
 import { confirmPasswordReset, applyActionCode } from 'firebase/auth'
-import { auth } from '../config/firebase'
-import { ROUTES } from '../config/routes'
-import { COMPANY } from '../config/company'
+import { auth } from '../../config/firebase'
+import { ROUTES } from '../../config/routes'
+import { COMPANY } from '../../config/company'
+import { useAuth } from '../../context/AuthContext'
+import { apiGetMe } from '../../services/authApi'
+import PasswordStrength, { isPasswordValid, PASSWORD_ERROR } from '../../components/auth/PasswordStrength'
 import styles from './AuthAction.module.css'
 
 export default function AuthAction() {
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const { setSession } = useAuth()
+
   const mode = searchParams.get('mode')
   const oobCode = searchParams.get('oobCode') || ''
 
   // Reset password state
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
 
   // Email verify state (auto-runs on mount)
   const [verifyStatus, setVerifyStatus] = useState<'loading' | 'success' | 'error'>('loading')
+  const hasApplied = useRef(false)
 
   useEffect(() => {
     if (mode === 'verifyEmail' && oobCode) {
+      if (hasApplied.current) return
+      hasApplied.current = true
       applyActionCode(auth, oobCode)
-        .then(() => setVerifyStatus('success'))
+        .then(async () => {
+          await auth.currentUser?.reload()
+
+          // Same browser — user is still logged in and now verified
+          if (auth.currentUser?.emailVerified) {
+            try {
+              const token = await auth.currentUser.getIdToken()
+              const data = await apiGetMe(token)
+              setSession(data)
+              navigate(ROUTES.DASHBOARD, { replace: true })
+              return
+            } catch {
+              // 404 = user verified but not yet registered in backend
+              // Send to login to complete registration (company step)
+              navigate(`${ROUTES.AUTH}?mode=login`, { replace: true })
+              return
+            }
+          }
+
+          // Cross-device verification — show success screen with manual login link
+          setVerifyStatus('success')
+        })
         .catch(() => setVerifyStatus('error'))
     }
-  }, [mode, oobCode])
+  }, [mode, oobCode, navigate, setSession])
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    if (newPassword.length < 6) { setError('Password must be at least 6 characters.'); return }
+    if (!isPasswordValid(newPassword)) { setError(PASSWORD_ERROR); return }
     if (newPassword !== confirmPassword) { setError('Passwords do not match.'); return }
     setSubmitting(true)
     try {
@@ -77,25 +109,46 @@ export default function AuthAction() {
                 <form onSubmit={handleReset} className={styles.form}>
                   <div className={styles.field}>
                     <label className={styles.label}>New password</label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="Min. 6 characters"
-                      value={newPassword}
-                      onChange={e => setNewPassword(e.target.value)}
-                      className={styles.input}
-                    />
+                    <div className={styles.passwordWrap}>
+                      <input
+                        type={showNewPassword ? 'text' : 'password'}
+                        required
+                        placeholder="Min. 8 characters"
+                        value={newPassword}
+                        onChange={e => setNewPassword(e.target.value)}
+                        className={styles.input}
+                      />
+                      <button
+                        type="button"
+                        className={styles.eyeBtn}
+                        onClick={() => setShowNewPassword(v => !v)}
+                        aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showNewPassword ? <EyeOffIcon /> : <EyeIcon />}
+                      </button>
+                    </div>
+                    <PasswordStrength password={newPassword} />
                   </div>
                   <div className={styles.field}>
                     <label className={styles.label}>Confirm password</label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="Repeat password"
-                      value={confirmPassword}
-                      onChange={e => setConfirmPassword(e.target.value)}
-                      className={styles.input}
-                    />
+                    <div className={styles.passwordWrap}>
+                      <input
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        required
+                        placeholder="Repeat password"
+                        value={confirmPassword}
+                        onChange={e => setConfirmPassword(e.target.value)}
+                        className={styles.input}
+                      />
+                      <button
+                        type="button"
+                        className={styles.eyeBtn}
+                        onClick={() => setShowConfirmPassword(v => !v)}
+                        aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
+                      </button>
+                    </div>
                   </div>
                   {error && <p className={styles.error}>{error}</p>}
                   <button type="submit" disabled={submitting} className={styles.btn}>
@@ -142,5 +195,24 @@ export default function AuthAction() {
         )}
       </div>
     </div>
+  )
+}
+
+function EyeIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  )
+}
+
+function EyeOffIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+      <line x1="1" y1="1" x2="23" y2="23"/>
+    </svg>
   )
 }

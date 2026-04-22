@@ -1,4 +1,4 @@
-import CTASection from '../components/sections/CTASection'
+import CTASection from '../../components/sections/CTASection'
 import styles from './Features.module.css'
 
 export default function Features() {

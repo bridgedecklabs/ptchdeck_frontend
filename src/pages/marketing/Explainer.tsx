@@ -1,5 +1,5 @@
-import Badge from '../components/ui/Badge'
-import CTASection from '../components/sections/CTASection'
+import Badge from '../../components/ui/Badge'
+import CTASection from '../../components/sections/CTASection'
 import styles from './Explainer.module.css'
 
 export default function Explainer() {

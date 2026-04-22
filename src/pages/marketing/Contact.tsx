@@ -1,6 +1,6 @@
-import ContactForm from '../components/sections/ContactForm'
-import CTASection from '../components/sections/CTASection'
-import { COMPANY } from '../config/company'
+import ContactForm from '../../components/sections/ContactForm'
+import CTASection from '../../components/sections/CTASection'
+import { COMPANY } from '../../config/company'
 import styles from './Contact.module.css'
 
 export default function Contact() {

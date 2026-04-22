@@ -8,6 +8,7 @@ import {
   sendPasswordResetEmail,
   signInWithPopup,
   updateProfile,
+  fetchSignInMethodsForEmail,
 } from 'firebase/auth'
 import { auth, googleProvider } from '../../config/firebase'
 import { useAuth } from '../../context/AuthContext'
@@ -29,9 +30,10 @@ function getFirebaseError(code: string): string {
     case 'auth/email-already-in-use': return 'This email is already registered. Try logging in.'
     case 'auth/invalid-email': return 'Please enter a valid email address.'
     case 'auth/weak-password': return 'Password must be at least 6 characters.'
-    case 'auth/user-not-found': return 'No account found with this email.'
-    case 'auth/wrong-password': return 'Incorrect password. Try again or reset it.'
-    case 'auth/invalid-credential': return 'Incorrect email or password.'
+    case 'auth/user-not-found': return 'No account found. Sign up to create your firm.'
+    case 'auth/wrong-password': return 'Incorrect password. Please try again.'
+    case 'auth/invalid-credential': return 'Incorrect password. Please try again.'
+    case 'auth/account-exists-with-different-credential': return 'An account already exists with this email using a different login method. Please use your original login method.'
     case 'auth/too-many-requests': return 'Too many attempts. Please try again later.'
     case 'auth/popup-closed-by-user': return ''
     default: return 'Something went wrong. Please try again.'
@@ -63,7 +65,7 @@ export default function AuthPage() {
   const [forgotEmail, setForgotEmail] = useState(emailParam)
   const [forgotSent, setForgotSent] = useState(false)
 
-  // Company view (Google new-user flow)
+  // Company view (Google new-user signup only)
   const [companyInput, setCompanyInput] = useState('')
 
   const [showPassword, setShowPassword] = useState(false)
@@ -73,7 +75,7 @@ export default function AuthPage() {
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  const switchView = (v: View) => { setError(''); setView(v) }
+  const switchView = (v: View) => { setError(''); setSubmitting(false); setView(v) }
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -81,17 +83,22 @@ export default function AuthPage() {
     if (!name.trim()) { setError('Please enter your name.'); return }
     if (!company.trim()) { setError('Please enter your company name.'); return }
     if (password !== confirmPassword) { setError('Passwords do not match.'); return }
-    if (password.length < 6) { setError('Password must be at least 6 characters.'); return }
+    if (password.length < 8) { setError('Password must be at least 8 characters.'); return }
     setSubmitting(true)
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password)
       await updateProfile(cred.user, { displayName: name.trim() })
-      // Store company temporarily until email is verified and they log in
-      sessionStorage.setItem('ptchdeck_pending_company', company.trim())
+      await apiEmailRegister({
+        firebase_uid: cred.user.uid,
+        email: cred.user.email!,
+        full_name: name.trim(),
+        company_name: company.trim(),
+      })
       await sendEmailVerification(cred.user)
       setView('verify')
     } catch (err: unknown) {
-      setError(getFirebaseError((err as { code?: string }).code || ''))
+      const code = (err as { code?: string }).code || ''
+      setError(code ? getFirebaseError(code) : (err as Error).message || 'Something went wrong.')
     } finally {
       setSubmitting(false)
     }
@@ -115,23 +122,26 @@ export default function AuthPage() {
         setSession(data)
       } catch (apiErr) {
         if (apiErr instanceof ApiNotFoundError) {
-          // New user — register in backend using stored company
-          const storedCompany = sessionStorage.getItem('ptchdeck_pending_company') || ''
-          const data = await apiEmailRegister({
-            firebase_uid: cred.user.uid,
-            email: cred.user.email!,
-            full_name: cred.user.displayName || '',
-            company_name: storedCompany,
-          })
-          sessionStorage.removeItem('ptchdeck_pending_company')
-          setSession(data)
-        } else {
-          throw apiErr
+          await signOut(auth)
+          setError('No account found. Sign up to create your firm.')
+          return
         }
+        throw apiErr
       }
       navigate(ROUTES.DASHBOARD, { replace: true })
     } catch (err: unknown) {
       const code = (err as { code?: string }).code || ''
+      if (code === 'auth/invalid-credential' || code === 'auth/user-not-found') {
+        try {
+          const methods = await fetchSignInMethodsForEmail(auth, loginEmail)
+          if (methods.includes('google.com') && !methods.includes('password')) {
+            setError("You signed up with Google. Click 'Continue with Google' to login, or use 'Forgot Password' to set a password for email login.")
+            return
+          }
+        } catch {
+          // fetchSignInMethodsForEmail failed — fall through to default error
+        }
+      }
       const msg = code ? getFirebaseError(code) : (err as Error).message || 'Something went wrong.'
       setError(msg)
     } finally {
@@ -166,7 +176,13 @@ export default function AuthPage() {
       })
 
       if ('needs_company' in response && response.needs_company) {
-        // New Google user — collect company name before creating firm
+        if (view === 'login') {
+          // No account exists — user must sign up first
+          await signOut(auth)
+          setError('No account found. Sign up to create your firm.')
+          return
+        }
+        // Signup flow — collect company name before creating firm
         sessionStorage.setItem('ptchdeck_google_uid', result.user.uid)
         sessionStorage.setItem('ptchdeck_google_email', result.user.email!)
         sessionStorage.setItem('ptchdeck_google_name', result.user.displayName || '')
@@ -372,7 +388,7 @@ export default function AuthPage() {
                     <input
                       type="text"
                       required
-                      placeholder="Alex Johnson"
+                      placeholder="Your name"
                       value={name}
                       onChange={e => setName(e.target.value)}
                       className={styles.input}
@@ -383,7 +399,7 @@ export default function AuthPage() {
                     <input
                       type="text"
                       required
-                      placeholder="Sequoia Capital"
+                      placeholder="Your firm name"
                       value={company}
                       onChange={e => setCompany(e.target.value)}
                       className={styles.input}
@@ -410,7 +426,7 @@ export default function AuthPage() {
                       <input
                         type={showPassword ? 'text' : 'password'}
                         required
-                        placeholder="Min. 6 characters"
+                        placeholder="Min. 8 characters"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                         className={styles.input}
@@ -419,6 +435,7 @@ export default function AuthPage() {
                         {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                       </button>
                     </div>
+
                   </div>
                   <div className={styles.field}>
                     <label className={styles.label}>Confirm password</label>
@@ -540,7 +557,7 @@ export default function AuthPage() {
                   <input
                     type="text"
                     required
-                    placeholder="Sequoia Capital"
+                    placeholder="Your firm name"
                     value={companyInput}
                     onChange={e => setCompanyInput(e.target.value)}
                     className={styles.input}

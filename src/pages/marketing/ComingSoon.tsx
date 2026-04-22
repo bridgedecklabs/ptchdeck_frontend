@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ROUTES } from '../config/routes'
-import { COMPANY } from '../config/company'
+import { ROUTES } from '../../config/routes'
+import { COMPANY } from '../../config/company'
 import styles from './ComingSoon.module.css'
 
 export default function ComingSoon() {
