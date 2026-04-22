@@ -10,6 +10,7 @@ import { useAuth } from '../../context/AuthContext'
 import { ROUTES } from '../../config/routes'
 import { COMPANY } from '../../config/company'
 import { apiAcceptInvite, apiGetInviteInfo } from '../../services/authApi'
+import PasswordStrength, { PasswordRules, isPasswordValid, PASSWORD_ERROR } from '../../components/auth/PasswordStrength'
 import styles from './AuthPage.module.css'
 
 function getFirebaseError(code: string): string {
@@ -86,7 +87,7 @@ export default function InviteAcceptPage() {
     setError('')
     if (!fullName.trim()) { setError('Please enter your full name.'); return }
     if (password !== confirmPassword) { setError('Passwords do not match.'); return }
-    if (password.length < 6) { setError('Password must be at least 6 characters.'); return }
+    if (!isPasswordValid(password)) { setError(PASSWORD_ERROR); return }
     setSubmitting(true)
     try {
       const cred = await createUserWithEmailAndPassword(auth, inviteEmail, password)
@@ -217,7 +218,7 @@ export default function InviteAcceptPage() {
               <input
                 type="text"
                 required
-                placeholder="Alex Johnson"
+                placeholder="Your name"
                 value={fullName}
                 onChange={e => setFullName(e.target.value)}
                 className={styles.input}
@@ -231,7 +232,7 @@ export default function InviteAcceptPage() {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
-                  placeholder="Min. 6 characters"
+                  placeholder="Min. 8 characters"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   className={styles.input}
@@ -245,6 +246,8 @@ export default function InviteAcceptPage() {
                   {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                 </button>
               </div>
+              <PasswordStrength password={password} />
+              <PasswordRules password={password} />
             </div>
 
             <div className={styles.field}>

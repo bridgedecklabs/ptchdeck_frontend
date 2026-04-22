@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { sanityClient, urlFor } from '../config/sanity'
+import { sanityClient, urlFor } from '../../config/sanity'
 import styles from './VCDirectory.module.css'
 
 interface VCFirm {
