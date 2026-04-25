@@ -1,0 +1,259 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.section {
+  padding: 28px 32px;
+}
+
+.sectionTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px;
+}
+
+.sectionDesc {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.updateBtn {
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  color: #374151;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.updateBtn:hover {
+  background: #f3f4f6;
+}
+
+.cardRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.cardIcon {
+  color: #4f46e5;
+  flex-shrink: 0;
+}
+
+.cardInfo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cardName {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.defaultBadge {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  border: 1.5px solid #374151;
+  color: #374151;
+  border-radius: 4px;
+  padding: 1px 7px;
+}
+
+.cardMeta {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.secureLink {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4f46e5;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.secureLink:hover {
+  text-decoration: underline;
+}
+
+.divider {
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.fieldsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+}
+
+.fieldInputWrap {
+  position: relative;
+}
+
+.fieldInput {
+  width: 100%;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 11px 40px 11px 14px;
+  font-size: 13.5px;
+  color: #374151;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.fieldInput:focus {
+  border-color: #4f46e5;
+  background: #fff;
+}
+
+.fieldInput::placeholder {
+  color: #9ca3af;
+}
+
+.editIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+/* Save bar */
+.saveBar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 16px 32px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
+.saveNote {
+  font-size: 12.5px;
+  color: #9ca3af;
+}
+
+.saveBtn {
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.saveBtn:hover {
+  background: #4338ca;
+}
+
+.saveBtnSaved {
+  background: #16a34a;
+}
+
+.saveBtnSaved:hover {
+  background: #15803d;
+}
+
+/* Help row */
+.helpRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 32px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.helpIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ede9fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7c3aed;
+  flex-shrink: 0;
+}
+
+.helpText {
+  flex: 1;
+}
+
+.helpTitle {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.helpDesc {
+  font-size: 12.5px;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+.supportLink {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4f46e5;
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.supportLink:hover {
+  text-decoration: underline;
+}

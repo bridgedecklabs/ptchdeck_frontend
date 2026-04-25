@@ -1,0 +1,159 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* Search */
+.searchWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 11px;
+  color: var(--color-text-tertiary);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 9px 36px 9px 34px;
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  background: #ffffff;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.searchInput::placeholder { color: var(--color-text-tertiary); }
+
+.searchInput:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-muted);
+}
+
+.clearBtn {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-tertiary);
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.clearBtn:hover { color: var(--color-text-primary); }
+
+/* Filter row */
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.spacer { flex: 1; }
+
+/* Select */
+.selectWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.selectPrefixIcon {
+  position: absolute;
+  left: 9px;
+  color: var(--color-text-tertiary);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  transition: color var(--transition-fast);
+}
+
+.selectPrefixIconActive { color: var(--color-accent); }
+
+.select {
+  appearance: none;
+  padding: 7px 26px 7px 10px;
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  background: #ffffff;
+  cursor: pointer;
+  outline: none;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.select:focus { border-color: var(--color-accent); }
+
+.selectWithIcon { padding-left: 28px; }
+
+.selectActive {
+  color: var(--color-text-primary);
+  border-color: var(--color-accent);
+  background: var(--color-accent-muted);
+}
+
+.chevron {
+  position: absolute;
+  right: 7px;
+  color: var(--color-text-tertiary);
+  pointer-events: none;
+}
+
+/* Toggle */
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.toggleText {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-elevated);
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-normal);
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.toggleOn { background: var(--color-accent); }
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: #ffffff;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-normal);
+}
+
+.toggleOn .toggleThumb { transform: translateX(16px); }

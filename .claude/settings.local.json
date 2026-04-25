@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(start \"c:\\\\Users\\\\Athul T\\\\ptchdeck_frontend\\\\index.html\")",
+      "Bash(npm run *)",
+      "PowerShell(Get-ExecutionPolicy)",
+      "Bash(npx tsc *)",
+      "Bash(npm install *)"
+    ]
+  }
+}

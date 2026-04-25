@@ -1,0 +1,7 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  /* Let the board scroll horizontally without the page itself overflowing */
+  min-width: 0;
+  overflow: hidden;
+}

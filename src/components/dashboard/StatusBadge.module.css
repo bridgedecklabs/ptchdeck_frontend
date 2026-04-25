@@ -1,0 +1,42 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* Status variants */
+.scored {
+  background: #dcfce7;
+  color: #15803d;
+}
+.scored .dot { background: #16a34a; }
+
+.processing {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.processing .dot { background: #2563eb; }
+
+.queued {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-secondary);
+}
+.queued .dot { background: var(--color-text-tertiary); }
+
+.failed {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.failed .dot { background: #dc2626; }
